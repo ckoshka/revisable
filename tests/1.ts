@@ -22,4 +22,7 @@ const x = revisable({
 		domainName.startsWith("https") ? { encrypt: true } : { encrypt: false }
 	)
     .map("encrypt", bool => bool ? "SHA-1" : "none")
-type B = typeof x.contents.checkCache;
+
+type inferredAsNumber = typeof x.contents.checkCache extends number ? true : false;
+type inferredNewProperty = typeof x.contents.encrypt extends "SHA-1" | "none" ? true : false; 
+const _d: inferredAsNumber & inferredNewProperty = true;
