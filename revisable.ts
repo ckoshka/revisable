@@ -14,7 +14,11 @@ export type Revisable<T> = {
 	extend: <Rec extends Record<string, unknown>>(
 		mapfn: (a0: T) => Rec,
 	) => Revisable<Omit<T, keyof Rec> & Rec>;
+	
+	delete: <K extends keyof T>(key: K) => Revisable<Omit<T, K>>;
+
 	contents: T;
+
 };
 
 export const revisable = <T>(t: T): Revisable<T> => ({
@@ -47,4 +51,10 @@ export const revisable = <T>(t: T): Revisable<T> => ({
 			...t,
 			...settings,
 		}),
+
+	delete: <K extends keyof T>(key: K): Revisable<Omit<T, K>> => {
+		const copy = {...t};
+		delete copy[key];
+		return revisable({...copy}) as unknown as Revisable<Omit<T, K>>;
+	}
 });
