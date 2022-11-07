@@ -1,3 +1,5 @@
+import { produce } from "./deps.ts";
+
 export type Revisable<T> = {
 	revise: (settings: Partial<T>) => Revisable<T>;
 
@@ -19,6 +21,7 @@ export type Revisable<T> = {
 
 	contents: T;
 
+	modify: (draft: (a0: T) => void | T) => Revisable<T>;
 };
 
 export const revisable = <T>(t: T): Revisable<T> => ({
@@ -56,5 +59,8 @@ export const revisable = <T>(t: T): Revisable<T> => ({
 		const copy = {...t};
 		delete copy[key];
 		return revisable({...copy}) as unknown as Revisable<Omit<T, K>>;
-	}
+	},
+
+	modify: (draft: (a0: T) => void | T) =>
+			revisable(produce(t, draft))
 });
